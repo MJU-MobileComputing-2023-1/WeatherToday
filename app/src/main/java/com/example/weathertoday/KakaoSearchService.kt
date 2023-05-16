@@ -13,7 +13,7 @@ import retrofit2.http.Query
 interface KakaoSearchService {
     @Headers("Authorization: KakaoAK ed477ac16231bc9a775a548b9f93fc32")
     @GET("v2/local/search/address.json")
-    suspend fun searchAddress(@Query("query") query: String): Response<LocationResponse>
+    suspend fun searchAddress(@Query("query") query: String): Response<AddressResult>
 
 
     companion object {
@@ -42,6 +42,6 @@ data class AddressResult(
 
 data class AddressDocument(
     val address_name: String,
-    val x: String, // longitude
-    val y: String  // latitude
+    val x: Double, // longitude
+    val y: Double  // latitude
 )

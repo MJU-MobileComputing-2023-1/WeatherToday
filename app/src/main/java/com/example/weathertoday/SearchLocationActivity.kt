@@ -1,5 +1,6 @@
 package com.example.weathertoday
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
@@ -10,8 +11,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.content.Context
 
-// SearchLocationActivity.kt
 class SearchLocationActivity : AppCompatActivity() {
 
     private lateinit var database: WeatherDatabase
@@ -32,7 +33,6 @@ class SearchLocationActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             val response = kakaoSearchService.searchAddress(searchQuery)
             val locationData = response.body()
-            // Add a null check for locationData
             if (locationData != null && locationData.documents.isNotEmpty()) {
                 val document = locationData.documents[0]
                 val location = Location(
@@ -42,22 +42,23 @@ class SearchLocationActivity : AppCompatActivity() {
                     longitude = document.x.toDouble()
                 )
 
-                // Save the location data to the database
                 database.locationDao().insertLocation(location)
 
                 val locations = database.locationDao().getAllLocations()
                 withContext(Dispatchers.Main) {
-                    val adapter = LocationAdapter(locations)
-                    findViewById<RecyclerView>(R.id.recyclerView).adapter = adapter
+                    val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+                    val adapter = LocationAdapter(locations) { selectedLocation ->
+                        // Save the selected location ID to SharedPreferences
+                        val sharedPreferences = getSharedPreferences("WeatherToday", Context.MODE_PRIVATE)
+                        sharedPreferences.edit().putInt("selectedLocationId", selectedLocation.id).apply()
+
+                        // Return to MainActivity
+                        val intent = Intent(this@SearchLocationActivity, MainActivity::class.java)
+                        startActivity(intent)
+                    }
+                    recyclerView.adapter = adapter
                 }
             }
         }
     }
 }
-data class LocationResponse(val documents: List<Document>)
-
-data class Document(
-    val address_name: String,
-    val x: Double,
-    val y: Double
-)

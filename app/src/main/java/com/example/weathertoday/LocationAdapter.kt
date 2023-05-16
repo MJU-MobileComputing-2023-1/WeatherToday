@@ -6,7 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.databinding.DataBindingUtil
 import com.example.weathertoday.databinding.ItemLocationBinding
 
-class LocationAdapter(private val locations: List<Location>) : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
+class LocationAdapter(private val locations: List<Location>, val itemClick: (Location) -> Unit) :
+    RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -15,7 +16,9 @@ class LocationAdapter(private val locations: List<Location>) : RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: LocationViewHolder, position: Int) {
-        holder.binding.location = locations[position]
+        val location = locations[position]
+        holder.binding.location = location
+        holder.binding.root.setOnClickListener { itemClick(location) }
     }
 
     override fun getItemCount(): Int = locations.size

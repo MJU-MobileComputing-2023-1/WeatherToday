@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.content.Context
+import android.util.Log
 
 class SearchLocationActivity : AppCompatActivity() {
 
@@ -41,8 +42,15 @@ class SearchLocationActivity : AppCompatActivity() {
                     latitude = document.y.toDouble(),
                     longitude = document.x.toDouble()
                 )
+                Log.d("TEST","$location")
 
-                database.locationDao().insertLocation(location)
+                try {
+                    database.locationDao().insertLocation(location)
+                    Log.d("TEST","DATA inserted")
+                }catch(e: NumberFormatException){
+                    Log.d("TEST","DATA not inserted")
+                }
+
 
                 val locations = database.locationDao().getAllLocations()
                 withContext(Dispatchers.Main) {

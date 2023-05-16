@@ -42,6 +42,6 @@ data class AddressResult(
 
 data class AddressDocument(
     val address_name: String,
-    val x: Double, // longitude
-    val y: Double  // latitude
+    val x: String, // longitude
+    val y: String  // latitude
 )

@@ -45,6 +45,9 @@ interface LocationDao {
 
     @Query("DELETE FROM location")
     fun deleteAllLocations()
+
+    @Query("SELECT * FROM location WHERE id = :id")
+    fun getLocation(id: Int): Location
 }
 
 @Dao
